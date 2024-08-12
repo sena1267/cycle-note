@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/app
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql:8.0
+    container_name: cycle-note-db
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: todo-db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      TZ: Asia/Tokyo
+    volumes:
+      - db-volume:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  db-volume: null
