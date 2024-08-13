@@ -24,7 +24,8 @@ services:
       MYSQL_PASSWORD: password
       TZ: Asia/Tokyo
     volumes:
-      - db-volume:/var/lib/mysql
+      - db-volume:/var/lib/init
+      - ./init://docker-entrypoint-initdb.d
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s
