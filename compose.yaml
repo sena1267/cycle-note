@@ -7,13 +7,14 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./:/app
+      - type: bind
+        source: ./
+        target: /app
     depends_on:
       db:
         condition: service_healthy
   db:
     image: mysql:8.0
-    container_name: cycle-note-db
     ports:
       - "3306:3306"
     restart: always
@@ -24,8 +25,12 @@ services:
       MYSQL_PASSWORD: password
       TZ: Asia/Tokyo
     volumes:
-      - db-volume:/var/lib/init
-      - ./init://docker-entrypoint-initdb.d
+      - type: volume
+        source: db-volume
+        target: /var/lib/init
+      - type: bind
+        source: ./init
+        target: /docker-entrypoint-initdb.d
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s
