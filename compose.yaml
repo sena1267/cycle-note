@@ -19,10 +19,9 @@ services:
       - "3306:3306"
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: todo-db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+#      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: "cycle_note"
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
       TZ: Asia/Tokyo
     volumes:
       - type: volume
