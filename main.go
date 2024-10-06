@@ -28,6 +28,9 @@ func main() {
 	}
 
 	authenticator, err := auth.NewAuthenticator(cfg.Auth)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	userRepo := repository.NewUserRepository(dbClient)
 	authUsecase := usecase.NewAuthUsecase(userRepo)
