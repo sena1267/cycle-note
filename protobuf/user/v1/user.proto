@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package protobuf.user.v1;
+
+option go_package = "github.com/sena1267/cycle-note/gen/protobuf/user/v1;userv1";
+
+service UserService{
+  rpc Me(MeRequest) returns (MeResponse) {}
+}
+
+message MeRequest {
+  string token = 1;
+}
+
+message MeResponse {
+  string id = 1;
+  string name = 2;
+}
