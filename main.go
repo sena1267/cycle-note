@@ -7,6 +7,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/sena1267/cycle-note/config"
 	"github.com/sena1267/cycle-note/gen/protobuf/auth/v1/authv1connect"
+	"github.com/sena1267/cycle-note/gen/protobuf/user/v1/userv1connect"
 	"github.com/sena1267/cycle-note/handler"
 	"github.com/sena1267/cycle-note/infrastructure"
 	"github.com/sena1267/cycle-note/infrastructure/repository"
@@ -33,8 +34,11 @@ func main() {
 	}
 
 	userRepo := repository.NewUserRepository(dbClient)
-	authUsecase := usecase.NewAuthUsecase(userRepo)
+	authUsecase := usecase.NewAuthUsecase(userRepo, authenticator)
 	authServiceHandler := handler.NewAuthHandler(authUsecase)
+
+	userUsecase := usecase.NewUserUsecase(userRepo)
+	userServiceHandler := handler.NewUserHandler(userUsecase)
 
 	interceptors := connect.WithInterceptors(
 		middleware.NewAuthInterceptor(authenticator),
@@ -47,6 +51,7 @@ func main() {
 	//authPath, authHandler := authv1connect.NewAuthServiceHandler(authServiceHandler)
 	authPath, authHandler := authv1connect.NewAuthServiceHandler(authServiceHandler, interceptors)
 	mux.Handle(authPath, authHandler)
+	mux.Handle(userv1connect.NewUserServiceHandler(userServiceHandler, interceptors))
 	err = http.ListenAndServe(
 		"0.0.0.0:8080",
 		// Use h2c so we can serve HTTP/2 without TLS.
