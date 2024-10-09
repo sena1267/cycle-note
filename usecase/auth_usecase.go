@@ -12,12 +12,12 @@ import (
 )
 
 type Auth struct {
-	repo          repository.UserRepository
+	userRepo      repository.UserRepository
 	authenticator auth.Authenticator
 }
 
-func NewAuthUsecase(repo repository.UserRepository) Auth {
-	return Auth{repo: repo}
+func NewAuthUsecase(repo repository.UserRepository, authenticator auth.Authenticator) Auth {
+	return Auth{userRepo: repo, authenticator: authenticator}
 }
 
 type SignUpInput struct {
@@ -51,17 +51,11 @@ func (uc *Auth) SignUp(ctx context.Context, input SignUpInput) (SignUpOutput, er
 		Password: hashPassword,
 		Email:    input.Email,
 	}
-	if err = uc.repo.Create(ctx, newUser); err != nil {
+	if err = uc.userRepo.Create(ctx, newUser); err != nil {
 		return SignUpOutput{}, fmt.Errorf("failed to create user. %w", err)
 	}
 
-	// TODO: authenticator の初期化を別の場所で行う
-	authenticator := auth.Authenticator{
-		AccessTokenExpirationHour: 12,
-		AccessTokenSecret:         "secret",
-	}
-
-	token, err := authenticator.CreateAccessToken(ctx, newUser)
+	token, err := uc.authenticator.CreateAccessToken(ctx, newUser)
 	if err != nil {
 		return SignUpOutput{}, fmt.Errorf("failed to create access token. %w", err)
 	}
@@ -70,7 +64,7 @@ func (uc *Auth) SignUp(ctx context.Context, input SignUpInput) (SignUpOutput, er
 }
 
 func (uc *Auth) SignIn(ctx context.Context, input SignInInput) (SignInOutput, error) {
-	user, err := uc.repo.GetByEmail(ctx, input.Email)
+	user, err := uc.userRepo.GetByEmail(ctx, input.Email)
 	if err != nil {
 		return SignInOutput{}, fmt.Errorf("failed to get user by email. %w", err)
 	}
