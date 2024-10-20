@@ -7,6 +7,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/sena1267/cycle-note/config"
 	"github.com/sena1267/cycle-note/gen/protobuf/auth/v1/authv1connect"
+	"github.com/sena1267/cycle-note/gen/protobuf/ping/v1/pingv1connect"
 	"github.com/sena1267/cycle-note/gen/protobuf/user/v1/userv1connect"
 	"github.com/sena1267/cycle-note/handler"
 	"github.com/sena1267/cycle-note/infrastructure"
@@ -49,9 +50,10 @@ func main() {
 
 	mux := http.NewServeMux()
 	//authPath, authHandler := authv1connect.NewAuthServiceHandler(authServiceHandler)
-	authPath, authHandler := authv1connect.NewAuthServiceHandler(authServiceHandler, interceptors)
+	authPath, authHandler := authv1connect.NewAuthServiceHandler(authServiceHandler)
 	mux.Handle(authPath, authHandler)
 	mux.Handle(userv1connect.NewUserServiceHandler(userServiceHandler, interceptors))
+	mux.Handle(pingv1connect.NewPingServiceHandler(&handler.PingHandler{}))
 	err = http.ListenAndServe(
 		"0.0.0.0:8080",
 		// Use h2c so we can serve HTTP/2 without TLS.

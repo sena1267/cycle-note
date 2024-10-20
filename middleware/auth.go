@@ -17,6 +17,7 @@ const tokenHeader = "Authorization"
 func NewAuthInterceptor(authenticator auth.Authenticator) connect.UnaryInterceptorFunc {
 	interceptor := func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+			fmt.Println(req.Spec().Procedure)
 			if slices.Contains([]string{"SignUp", "SignIn"}, strings.Split(req.Spec().Procedure, "/")[2]) {
 				return next(ctx, req)
 			}

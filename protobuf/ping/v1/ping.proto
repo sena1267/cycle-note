@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package protobuf.ping.v1;
+
+option go_package = "github.com/sena1267/cycle-note/gen/protobuf/ping/v1;pingv1";
+
+service PingService{
+  rpc Ping(PingRequest) returns (PingResponse) {}
+}
+
+message PingRequest {}
+
+message PingResponse {
+  string message = 1;
+}
