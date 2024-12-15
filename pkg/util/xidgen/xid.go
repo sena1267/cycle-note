@@ -2,6 +2,8 @@ package xidgen
 
 import "github.com/rs/xid"
 
-func GenerateXID() string {
+type XIDGenerator struct{}
+
+func (g XIDGenerator) Generate() string {
 	return xid.New().String()
 }

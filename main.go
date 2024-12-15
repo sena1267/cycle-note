@@ -14,6 +14,7 @@ import (
 	"github.com/sena1267/cycle-note/infrastructure/repository"
 	"github.com/sena1267/cycle-note/middleware"
 	"github.com/sena1267/cycle-note/pkg/auth"
+	"github.com/sena1267/cycle-note/pkg/util/xidgen"
 	"github.com/sena1267/cycle-note/usecase"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -35,7 +36,7 @@ func main() {
 	}
 
 	userRepo := repository.NewUserRepository(dbClient)
-	authUsecase := usecase.NewAuthUsecase(userRepo, authenticator)
+	authUsecase := usecase.NewAuthUsecase(userRepo, authenticator, xidgen.XIDGenerator{})
 	authServiceHandler := handler.NewAuthHandler(authUsecase)
 
 	userUsecase := usecase.NewUserUsecase(userRepo)

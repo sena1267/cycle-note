@@ -4,20 +4,21 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/sena1267/cycle-note/domain"
 	"github.com/sena1267/cycle-note/domain/model"
 	"github.com/sena1267/cycle-note/domain/repository"
 	"github.com/sena1267/cycle-note/pkg/auth"
-	"github.com/sena1267/cycle-note/pkg/xidgen"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type Auth struct {
 	userRepo      repository.UserRepository
 	authenticator auth.Authenticator
+	idGenerator   domain.IDGenerator
 }
 
-func NewAuthUsecase(repo repository.UserRepository, authenticator auth.Authenticator) Auth {
-	return Auth{userRepo: repo, authenticator: authenticator}
+func NewAuthUsecase(repo repository.UserRepository, authenticator auth.Authenticator, idGenerator domain.IDGenerator) Auth {
+	return Auth{userRepo: repo, authenticator: authenticator, idGenerator: idGenerator}
 }
 
 type SignUpInput struct {
@@ -46,7 +47,7 @@ func (uc *Auth) SignUp(ctx context.Context, input SignUpInput) (SignUpOutput, er
 	}
 
 	newUser := model.User{
-		ID:       model.UserID(xidgen.GenerateXID()),
+		ID:       model.UserID(uc.idGenerator.Generate()),
 		Name:     input.Name,
 		Password: hashPassword,
 		Email:    input.Email,
