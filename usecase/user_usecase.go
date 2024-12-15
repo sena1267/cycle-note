@@ -1,28 +1,23 @@
 package usecase
 
 import (
-	"context"
-
-	"github.com/sena1267/cycle-note/domain/model"
 	"github.com/sena1267/cycle-note/domain/repository"
 )
 
-type User struct {
+type UserUsecase interface{}
+
+type userUsecase struct {
 	userRepo repository.UserRepository
 }
 
-func NewUserUsecase(repo repository.UserRepository) User {
-	return User{userRepo: repo}
-}
+type (
+	UserCreateInput struct {
+		Name     string
+		Email    string
+		Password string
+	}
+)
 
-type MeInput struct {
-	token string
-}
-
-type MeOutput struct {
-	user model.User
-}
-
-func (uc *User) Me(ctx context.Context, input MeInput) (MeOutput, error) {
-	return MeOutput{}, nil
+func NewUserUsecase(repo repository.UserRepository) UserUsecase {
+	return userUsecase{userRepo: repo}
 }

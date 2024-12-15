@@ -12,10 +12,10 @@ import (
 )
 
 type UserHandler struct {
-	u usecase.User
+	u usecase.UserUsecase
 }
 
-func NewUserHandler(u usecase.User) userv1connect.UserServiceHandler {
+func NewUserHandler(u usecase.UserUsecase) userv1connect.UserServiceHandler {
 	return &UserHandler{u: u}
 }
 
