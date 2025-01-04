@@ -74,13 +74,11 @@ func (a *Authenticator) GetUserIDFromToken(token string) (model.UserID, error) {
 
 	userID, ok := claims["user_id"]
 	if !ok {
-		// TODO: エラーメッセージ変更
-		return "", errors.New("no user")
+		return "", errors.New("user_id is not include in token claims")
 	}
 	strUserID, ok := userID.(string)
 	if !ok {
-		// TODO: エラーメッセージ変更
-		return "", errors.New("failed to convert")
+		return "", errors.New("failed to assert user_id")
 	}
 
 	return model.UserID(strUserID), nil

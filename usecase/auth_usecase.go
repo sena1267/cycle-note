@@ -86,7 +86,6 @@ func (uc *Auth) SignIn(ctx context.Context, input SignInInput) (SignInOutput, er
 
 }
 
-// TODO: 関数の定義場所を考える
 func encryptPassword(password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
