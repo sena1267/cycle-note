@@ -1,18 +1,22 @@
 package infrastructure
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/sena1267/cycle-note/config"
+	"github.com/sena1267/cycle-note/util/appctx"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/mysqldialect"
 )
 
+// TODO: user_idをミドルウェア等で指定する(全クエリにwhere句を設定する)
+
 type DBClient struct {
-	DB *bun.DB
+	db *bun.DB
 }
 
 func NewDBClient(cfg config.DB) (*DBClient, error) {
@@ -21,7 +25,7 @@ func NewDBClient(cfg config.DB) (*DBClient, error) {
 		return nil, fmt.Errorf("failed to init bunDB. %s", err)
 	}
 
-	return &DBClient{DB: bunDB}, nil
+	return &DBClient{db: bunDB}, nil
 }
 
 func NewBunDB(cfg config.DB) (*bun.DB, error) {
@@ -49,4 +53,22 @@ func NewBunDB(cfg config.DB) (*bun.DB, error) {
 	db := bun.NewDB(sqlDB, mysqldialect.New())
 
 	return db, nil
+}
+
+func (client *DBClient) DB() *bun.DB {
+	return client.db
+}
+
+func ApplyFixedWhere[T interface {
+	*bun.SelectQuery | *bun.InsertQuery
+}](ctx context.Context, query T) T {
+	userID := appctx.User(ctx).ID
+	switch q := any(query).(type) {
+	case *bun.SelectQuery:
+		return any(q.Where("user_id = ?", userID)).(T)
+	case *bun.InsertQuery:
+		return any(q.Where("user_id = ?", userID)).(T)
+	default:
+		return query
+	}
 }

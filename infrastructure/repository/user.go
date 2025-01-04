@@ -18,7 +18,7 @@ func NewUserRepository(dbClient *infrastructure.DBClient) repository.UserReposit
 }
 
 func (u *UserRepository) Create(ctx context.Context, user model.User) error {
-	_, err := u.dbClient.DB.NewInsert().Model(&user).Exec(ctx)
+	_, err := u.dbClient.DB().NewInsert().Model(&user).Exec(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to insert user. %w", err)
 	}
@@ -28,7 +28,7 @@ func (u *UserRepository) Create(ctx context.Context, user model.User) error {
 
 func (u *UserRepository) GetByEmail(ctx context.Context, email string) (*model.User, error) {
 	user := new(model.User)
-	if err := u.dbClient.DB.NewSelect().Model(user).Where("email = ?", email).Scan(ctx); err != nil {
+	if err := u.dbClient.DB().NewSelect().Model(user).Where("email = ?", email).Scan(ctx); err != nil {
 		return nil, fmt.Errorf("user not found. %w", err)
 	}
 

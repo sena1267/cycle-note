@@ -10,6 +10,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/sena1267/cycle-note/domain/model"
 	"github.com/sena1267/cycle-note/pkg/auth"
+	"github.com/sena1267/cycle-note/util/appctx"
 )
 
 const tokenHeader = "Authorization"
@@ -46,7 +47,7 @@ func NewAuthInterceptor(authenticator auth.Authenticator) connect.UnaryIntercept
 			}
 			fmt.Println(userID)
 
-			return next(model.ContextWithUser(ctx, model.User{ID: userID}), req)
+			return next(appctx.ContextWithUser(ctx, model.User{ID: userID}), req)
 		}
 	}
 	return interceptor
