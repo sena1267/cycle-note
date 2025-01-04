@@ -10,11 +10,6 @@ import (
 	"github.com/sena1267/cycle-note/usecase"
 )
 
-// TODO: おまじないの扱い
-// こんな「おまじない」があるらしい
-// 未実装のメソッドを見つけるのに便利だが、NewAuthHandler でもエラー出るんだよなあ
-var _ authv1connect.AuthServiceHandler = (*AuthHandler)(nil)
-
 type AuthHandler struct {
 	u usecase.Auth
 }
