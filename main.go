@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"connectrpc.com/connect"
 	"github.com/sena1267/cycle-note/config"
 	"github.com/sena1267/cycle-note/gen/protobuf/auth/v1/authv1connect"
+	"github.com/sena1267/cycle-note/gen/protobuf/medicine/v1/medicinev1connect"
 	"github.com/sena1267/cycle-note/gen/protobuf/ping/v1/pingv1connect"
 	"github.com/sena1267/cycle-note/gen/protobuf/user/v1/userv1connect"
 	"github.com/sena1267/cycle-note/handler"
@@ -42,6 +44,11 @@ func main() {
 	userUsecase := usecase.NewUserUsecase(userRepo)
 	userServiceHandler := handler.NewUserHandler(userUsecase)
 
+	// medicine
+	medicineRepo := repository.NewMedicineRepository(dbClient)
+	medicineUsecase := usecase.NewMedicineUsecase(medicineRepo)
+	medicineServiceHandler := handler.NewMedicineHandler(medicineUsecase)
+
 	interceptors := connect.WithInterceptors(
 		middleware.NewAuthInterceptor(authenticator),
 		middleware.NewCurrentTimeInterceptor(),
@@ -53,7 +60,9 @@ func main() {
 	//authPath, authHandler := authv1connect.NewAuthServiceHandler(authServiceHandler)
 	authPath, authHandler := authv1connect.NewAuthServiceHandler(authServiceHandler)
 	mux.Handle(authPath, authHandler)
+	fmt.Println(authPath)
 	mux.Handle(userv1connect.NewUserServiceHandler(userServiceHandler, interceptors))
+	mux.Handle(medicinev1connect.NewMedicineServiceHandler(medicineServiceHandler, interceptors))
 	mux.Handle(pingv1connect.NewPingServiceHandler(&handler.PingHandler{}))
 	err = http.ListenAndServe(
 		"0.0.0.0:8080",

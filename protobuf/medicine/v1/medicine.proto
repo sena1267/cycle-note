@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package protobuf.medicine.v1;
+
+option go_package = "github.com/sena1267/cycle-note/gen/protobuf/medicine/v1;medicinev1";
+
+message Medicine {
+  string id = 1;
+  string name = 2;
+  string note = 3;
+}
+
+message GetMedicineRequest {
+  string id = 1;
+}
+message ListMedicinesRequest {}
+message CreateMedicineRequest {
+  string name = 1;
+  string note = 2;
+}
+message UpdateMedicineRequest {
+  Medicine medicine = 1;
+}
+message DeleteMedicineRequest {
+  string id = 1;
+}
+message GetMedicineResponse {
+  Medicine medicine = 1;
+}
+message ListMedicinesResponse {
+  repeated Medicine medicines = 1;
+}
+message CreateMedicineResponse {
+  Medicine medicine = 1;
+}
+message UpdateMedicineResponse {
+  Medicine medicine = 1;
+}
+message DeleteMedicineResponse {}
+
+
+service MedicineService{
+  rpc GetMedicine(GetMedicineRequest) returns (GetMedicineResponse){}
+  rpc ListMedicines(ListMedicinesRequest) returns (ListMedicinesResponse){}
+  rpc CreateMedicine(CreateMedicineRequest) returns (CreateMedicineResponse){}
+  rpc UpdateMedicine(UpdateMedicineRequest) returns (UpdateMedicineResponse){}
+  rpc DeleteMedicine(DeleteMedicineRequest) returns (DeleteMedicineResponse){}
+}
