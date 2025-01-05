@@ -8,6 +8,7 @@ import (
 	medicinev1 "github.com/sena1267/cycle-note/gen/protobuf/medicine/v1"
 	"github.com/sena1267/cycle-note/gen/protobuf/medicine/v1/medicinev1connect"
 	"github.com/sena1267/cycle-note/usecase"
+	"github.com/sena1267/cycle-note/util/appctx"
 )
 
 type medicineHandler struct {
@@ -43,7 +44,7 @@ func (h *medicineHandler) ListMedicines(ctx context.Context, req *connect.Reques
 
 func (h *medicineHandler) CreateMedicine(ctx context.Context, req *connect.Request[medicinev1.CreateMedicineRequest]) (*connect.Response[medicinev1.CreateMedicineResponse], error) {
 	medicine, err := h.medicineUsecase.CreateMedicine(ctx, model.Medicine{
-		UserID: model.UserID(1),
+		UserID: appctx.User(ctx).ID,
 		Name:   req.Msg.Name,
 		Note:   req.Msg.Note,
 	})
